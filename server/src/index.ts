@@ -17,21 +17,41 @@ app.use(helmet())
 // cors allows requests from our React frontend
 // Without this, the browser blocks cross-origin requests
 
+// const allowedOrigins = [
+//   env.CLIENT_URL,                        // from .env — covers both dev and prod
+//   'http://localhost:5173',               // always allow local dev
+// ].filter(Boolean)
+
+// app.use(cors({
+//   origin: (origin, callback) => {
+//     // Allow requests with no origin (Postman, server-to-server)
+//     if (!origin) return callback(null, true)
+
+//     if (allowedOrigins.includes(origin)) {
+//       callback(null, true)
+//     } else {
+//       callback(new Error(`CORS blocked: ${origin} not in allowed list`))
+//     }
+//   },
+//   credentials: true,
+// }))
+
 const allowedOrigins = [
-  env.CLIENT_URL,                        // from .env — covers both dev and prod
-  'http://localhost:5173',               // always allow local dev
+  env.CLIENT_URL,
+  'http://localhost:5173',
 ].filter(Boolean)
 
 app.use(cors({
   origin: (origin, callback) => {
-    // Allow requests with no origin (Postman, server-to-server)
+    // Allow requests with no origin (Postman, mobile apps, server-to-server)
     if (!origin) return callback(null, true)
 
     if (allowedOrigins.includes(origin)) {
-      callback(null, true)
-    } else {
-      callback(new Error(`CORS blocked: ${origin} not in allowed list`))
+      return callback(null, true)
     }
+
+    // Don't throw — return false instead. Throwing causes a 500.
+    return callback(null, false)
   },
   credentials: true,
 }))
