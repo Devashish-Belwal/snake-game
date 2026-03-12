@@ -9,9 +9,9 @@ import { env } from './env'
 passport.use(
   new GoogleStrategy(
     {
-      clientID:     env.GOOGLE_CLIENT_ID,
+      clientID: env.GOOGLE_CLIENT_ID,
       clientSecret: env.GOOGLE_CLIENT_SECRET,
-      callbackURL:  `http://localhost:${env.PORT}/auth/google/callback`,
+      callbackURL: env.CALLBACK_URL,
     },
 
     // This function runs after Google authenticates the user.
@@ -21,9 +21,9 @@ passport.use(
       try {
         // Extract the fields we care about from Google's profile object
         const googleId = profile.id
-        const email    = profile.emails?.[0]?.value ?? ''
-        const name     = profile.displayName
-        const avatar   = profile.photos?.[0]?.value ?? ''
+        const email = profile.emails?.[0]?.value ?? ''
+        const name = profile.displayName
+        const avatar = profile.photos?.[0]?.value ?? ''
 
         // Find existing user OR create a new one.
         // This is the "find or create" pattern — the most common
@@ -36,7 +36,7 @@ passport.use(
           console.log(`New user created: ${name}`)
         } else {
           // Update name/avatar in case they changed it on Google
-          user.name   = name
+          user.name = name
           user.avatar = avatar
           await user.save()
         }

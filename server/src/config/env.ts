@@ -21,4 +21,5 @@ export const env = {
   GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET || '',
   JWT_SECRET: requireEnv('JWT_SECRET'),
   CLIENT_URL: process.env.CLIENT_URL || 'http://localhost:5173',
+  CALLBACK_URL: process.env.CALLBACK_URL || 'http://localhost:5000/auth/google/callback',
 }
