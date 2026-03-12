@@ -6,11 +6,11 @@ import { authApi } from '../api/auth.api'
 // ── CONTEXT TYPE ──────────────────────────────────────────
 // Everything any component can get from useAuth()
 type AuthContextType = {
-  user:              User | null
-  isLoading:         boolean       // true while checking token on startup
-  isAuthenticated:   boolean
-  loginWithGoogle:   () => void    // redirects to backend Google login
-  logout:            () => void
+  user: User | null
+  isLoading: boolean       // true while checking token on startup
+  isAuthenticated: boolean
+  loginWithGoogle: () => void    // redirects to backend Google login
+  logout: () => void
 }
 
 // ── CREATE CONTEXT ────────────────────────────────────────
@@ -20,7 +20,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 // ── PROVIDER ──────────────────────────────────────────────
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser]         = useState<User | null>(null)
+  const [user, setUser] = useState<User | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   // Start true — we don't know if user is logged in until we check
 
@@ -29,7 +29,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // We read it, store it, clean the URL, then fetch the user.
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
-    const token  = params.get('token')
+    const token = params.get('token')
 
     if (token) {
       // Store the token
@@ -75,8 +75,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   // ── AUTH ACTIONS ─────────────────────────────────────
   const loginWithGoogle = useCallback(() => {
-    // Simply redirect to the backend — Passport handles the rest
-    window.location.href = 'http://localhost:5000/auth/google'
+    window.location.href = `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/auth/google`
   }, [])
 
   const logout = useCallback(async () => {
