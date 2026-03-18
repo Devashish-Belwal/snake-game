@@ -49,7 +49,7 @@ export default function Board({ state, dispatch, onPause }: BoardProps) {
 
         // Empty dependency array = run once on mount, cleanup on unmount.
         // This is the React equivalent of window.addEventListener("load", ...)
-    }, [])
+    }, [dispatch])
 
     // ── Determine cell type — replaces your render() loop ──
     // For each (row, col) position, figure out what lives there.
