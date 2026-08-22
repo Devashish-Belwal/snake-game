@@ -17,6 +17,45 @@ export default function Board({ state, dispatch, onPause }: BoardProps) {
     const { snake, food, rows, cols } = state
     const boardRef = useRef<HTMLDivElement>(null)
 
+    const touchStart = useRef({ x: 0, y: 0 })
+    const MIN_SWIPE_DISTANCE = 30
+
+    const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
+        const touch = e.touches[0]
+
+        touchStart.current = {
+            x: touch.clientX,
+            y: touch.clientY,
+        }
+    }
+
+    const handleTouchEnd = (e: React.TouchEvent<HTMLDivElement>) => {
+        const touch = e.changedTouches[0]
+
+        const dx = touch.clientX - touchStart.current.x
+        const dy = touch.clientY - touchStart.current.y
+
+        // Ignore tiny movements
+        if (
+            Math.abs(dx) < MIN_SWIPE_DISTANCE &&
+            Math.abs(dy) < MIN_SWIPE_DISTANCE
+        ) {
+            return
+        }
+
+        if (Math.abs(dx) > Math.abs(dy)) {
+            dispatch({
+                type: 'CHANGE_DIRECTION',
+                payload: dx > 0 ? 'right' : 'left',
+            })
+        } else {
+            dispatch({
+                type: 'CHANGE_DIRECTION',
+                payload: dy > 0 ? 'down' : 'up',
+            })
+        }
+    }
+
     // ── Measure board, compute grid dimensions, tell the reducer ──
     // This replaces your setupBoard() function.
     // useEffect runs AFTER the div is rendered and mounted to the DOM,
@@ -65,7 +104,9 @@ export default function Board({ state, dispatch, onPause }: BoardProps) {
         <div
             ref={boardRef}
             onClick={onPause}
-            className="w-full flex-1 min-h-0 cursor-pointer"
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
+            className="w-full flex-1 min-h-0 cursor-pointer touch-none"
             style={{
                 display: 'grid',
                 gridTemplateColumns: `repeat(${cols}, ${CELL_SIZE}px)`,
